@@ -6,6 +6,35 @@ import { _ } from 'meteor/underscore';
 
 import { Lists } from './lists.js';
 
+import path from 'path';
+import winston from 'winston';
+import { Papertrail } from 'winston-papertrail';
+
+const logger = new winston.Logger({
+	transports: [
+		//new winston.transports.Console({
+		//	json: true,
+		//	stringify: true,
+		//	label: path
+		//}),
+		new winston.transports.Papertrail({
+			host: 'logsN.papertrailapp.com',
+			port: XXXXX,
+			hostname: process.env.DEPLOYMENT_ENV,
+			program: "todos",
+			handleExceptions: false,
+			json: true,
+			colorize: true,
+			logFormat(level, message) {
+				return `${level} : ${message}`;
+			}
+		})
+	],
+	level: "debug"
+});
+
+logger.info("Logging something from Winston");
+
 const LIST_ID_ONLY = new SimpleSchema({
   listId: Lists.simpleSchema().schema('_id'),
 }).validator({ clean: true, filter: false });
